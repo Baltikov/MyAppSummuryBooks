@@ -21,15 +21,16 @@ func InitDB() {
 
 	DB.SetMaxOpenConns(10)
 	DB.SetMaxIdleConns(5)
+	CreateTableBook()
 
 }
 
 func CreateTableBook() {
-	bookTable := `CREATE TABLE IF NOT EXISTS book (
+	bookTable := `CREATE TABLE IF NOT EXISTS books (
     book_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     title VARCHAR(55) NOT NULL,
     description TEXT NOT NULL,
-    citate TEXT NOT NULL
+    citation TEXT NOT NULL
 );`
 
 	_, err := DB.Exec(bookTable)
