@@ -22,6 +22,7 @@ func InitDB() {
 	DB.SetMaxOpenConns(10)
 	DB.SetMaxIdleConns(5)
 	CreateTableBook()
+	CreateTableFAQ()
 
 }
 
@@ -38,4 +39,35 @@ func CreateTableBook() {
 		log.Fatal(err)
 	}
 	log.Println("Table created successfully")
+}
+func CreateTableFAQ() {
+	query := `
+		CREATE TABLE IF NOT EXISTS faq (
+			faq_id INTEGER PRIMARY KEY AUTOINCREMENT,
+			description TEXT NOT NULL,
+			category TEXT NOT NULL
+		)
+	`
+	_, err := DB.Exec(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	query = `
+		INSERT INTO  faq (description, category)
+		VALUES
+			('как добавить книгу', 'Пользователь'),
+			('как опубликовать книгу', 'Автор'),
+			('как добавить Img для книги', 'Пользователь'),
+			('как купить подписку', 'Пользователь'),
+			('Куда писать если что-то не работает', 'Пользователь'),
+			('test', 'Пользователь'),
+			('test', 'Пользователь'),
+			('Как монетезировать свою книгу в приложении', 'Автор'),
+			('Куда писать если что-то не работает', 'Автор')
+	`
+	_, err = DB.Exec(query)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

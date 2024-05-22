@@ -7,4 +7,5 @@ func RegisterRoutes(server *gin.Engine) {
 	server.POST("/books", createBook)
 	server.PUT("/books/:id", updateBook)
 	server.DELETE("/books/:id", deleteBook)
+	server.GET("FAQ", getAllFQA)
 }
