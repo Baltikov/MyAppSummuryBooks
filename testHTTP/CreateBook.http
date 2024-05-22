@@ -1,0 +1,10 @@
+
+### Создание новой книги
+POST http://localhost:8080/books
+Content-Type: application/json
+
+{
+  "Title": "TEST",
+  "Description": "TEST",
+  "Citation": "TEST"
+}

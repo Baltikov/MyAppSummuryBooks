@@ -1,0 +1,3 @@
+### уДАЛЕНИЕ конкретной книги
+DELETE http://localhost:8080/books/3
+Content-Type: application/json
