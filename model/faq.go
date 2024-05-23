@@ -8,16 +8,17 @@ import (
 
 type Faq struct {
 	ID          int64  `json:"faq_id"`
-	Description string `json:"faq_description"`
+	Description string `json:"description"`
 	Category    string `json:"category"`
 }
 
-func GETAll(limit, page int) ([]Faq, error) {
-	query := "SELECT * FROM faq LIMIT ? OFFSET ?"
+func GETAll(limit, page int, search string) ([]Faq, error) {
+	query := "SELECT * FROM faq WHERE LOWER(description) LIKE LOWER(?) LIMIT ? OFFSET ?"
+
 	offset := (page - 1) * limit
 
 	log.Printf("Executing query: %s with params: %d, %d", query, limit, offset)
-	rowsFaq, err := bd.DB.Query(query, limit, offset)
+	rowsFaq, err := bd.DB.Query(query, "%"+search+"%", limit, offset)
 	if err != nil {
 		log.Printf("Error executing query: %v", err)
 		return nil, fmt.Errorf("error querying FAQs: %v", err)

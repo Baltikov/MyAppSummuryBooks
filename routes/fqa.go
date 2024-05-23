@@ -24,8 +24,9 @@ func getAllFAQ(context *gin.Context) {
 		log.Printf("Invalid page parameter: %v", err)
 		return
 	}
+	search := context.DefaultQuery("search", "")
 
-	allFaq, err := model.GETAll(limit, page)
+	allFaq, err := model.GETAll(limit, page, search)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 		log.Printf("Error getting FAQs: %v", err)
