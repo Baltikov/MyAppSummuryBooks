@@ -11,9 +11,15 @@ type Faq struct {
 	Category    string `json:"category"`
 }
 
-func GETAll() ([]Faq, error) {
-	query := "SELECT * FROM faq"
-	rowsFaq, err := bd.DB.Query(query)
+// 10/ 3
+func GETAll(limit, page int) ([]Faq, error) {
+	query := "SELECT * FROM faq LIMIT ? OFFSET ?"
+	var offset int
+	if page > 1 {
+		offset = (page - 1) * limit
+
+	}
+	rowsFaq, err := bd.DB.Query(query, limit, offset)
 	if err != nil {
 		return nil, err
 	}
