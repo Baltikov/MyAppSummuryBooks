@@ -13,7 +13,7 @@ type Faq struct {
 }
 
 func GETAll(limit, page int, search string) ([]Faq, error) {
-	query := "SELECT * FROM faq WHERE LOWER(description) LIKE LOWER(?) LIMIT ? OFFSET ?"
+	query := "SELECT * FROM faq WHERE LOWER(description, citation) LIKE LOWER(?) LIMIT ? OFFSET ?"
 
 	offset := (page - 1) * limit
 

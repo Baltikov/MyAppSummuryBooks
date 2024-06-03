@@ -10,6 +10,7 @@ type Book struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Citation    string `json:"citation"`
+	UserID      int64  `json:"user_id"`
 }
 
 func GetBooks() ([]Book, error) {
@@ -37,7 +38,19 @@ func GetBooks() ([]Book, error) {
 
 	return books, nil
 }
-
+func GetBook(id int64) (Book, error) {
+	query := `SELECT * FROM books WHERE id = userId`
+	rowBook, err := bd.DB.Query(query, id)
+	if err != nil {
+		return Book{}, fmt.Errorf("error querying book: %v", err)
+	}
+	var book Book
+	err = rowBook.Scan(&book.ID, &book.Title, &book.Description, &book.Citation, &book.UserID)
+	if err != nil {
+		return Book{}, fmt.Errorf("error scanning book: %v", err)
+	}
+	return book, nil
+}
 func CreateBook(book Book) ([]Book, error) {
 	query := "INSERT INTO books(title, description, citation) VALUES(?, ?, ?)"
 	result, err := bd.DB.Exec(query, &book.Title, &book.Description, &book.Citation)
@@ -53,9 +66,9 @@ func CreateBook(book Book) ([]Book, error) {
 
 }
 
-func UpdateBook(book Book, id int64) ([]Book, error) {
+func UpdateBook(book Book) ([]Book, error) {
 	query := `UPDATE books SET title = ?, description = ?, citation = ? WHERE book_id = ?`
-	bd.DB.Exec(query, &book.Title, &book.Description, &book.Citation, id)
+	bd.DB.Exec(query, &book.Title, &book.Description, &book.Citation)
 	books, err := GetBooks()
 	if err != nil {
 		return nil, fmt.Errorf("error getting books: %v", err)
@@ -63,12 +76,8 @@ func UpdateBook(book Book, id int64) ([]Book, error) {
 	return books, nil
 }
 
-func DeleteBook(id int64) ([]Book, error) {
+func DeleteBook(id int64) error {
 	query := `DELETE FROM books  WHERE book_id = ?`
 	bd.DB.Exec(query, id)
-	books, err := GetBooks()
-	if err != nil {
-		return nil, fmt.Errorf("error getting books: %v", err)
-	}
-	return books, nil
+	return nil
 }

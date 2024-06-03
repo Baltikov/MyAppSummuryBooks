@@ -5,6 +5,8 @@ import (
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
+
+	"testapi/pkg/loger"
 )
 
 var DB *sql.DB
@@ -13,14 +15,15 @@ func InitDB() {
 	var err error
 	DB, err = sql.Open("sqlite3", "./api.db")
 	if err != nil {
-		log.Fatalf("Error opening DB: %v", err)
+		loger.Logrus.Fatalf("Error opening DB: %v", err)
 	} else {
-		log.Println("Successfully opened DB")
+		loger.Logrus.Println("Successfully opened DB")
 		fmt.Println("Successfully opened DB")
 	}
 
 	DB.SetMaxOpenConns(10)
 	DB.SetMaxIdleConns(5)
+	CreateTableUsers()
 	CreateTableBook()
 	CreateTableFAQ()
 
@@ -31,14 +34,16 @@ func CreateTableBook() {
     book_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     title VARCHAR(55) NOT NULL,
     description TEXT NOT NULL,
-    citation TEXT NOT NULL
+    citation TEXT NOT NULL,
+    user_id INTEGER,
+    FOREIGN KEY(user_id) REFERENCES users (id)
 );`
 
 	_, err := DB.Exec(bookTable)
 	if err != nil {
-		log.Fatal(err)
+		loger.Logrus.Fatal(err)
 	}
-	log.Println("Table created successfully")
+	loger.Logrus.Info("Table created successfully")
 }
 func CreateTableFAQ() {
 	query := `
@@ -70,4 +75,17 @@ func CreateTableFAQ() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+func CreateTableUsers() {
+	query := `CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password TEXT NOT NULL
+    )`
+	_, err := DB.Exec(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Table Users created successfully")
+	loger.Logrus.Info("Table Users created successfully")
 }
