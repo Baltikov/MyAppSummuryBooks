@@ -1,6 +1,7 @@
 package model
 
 import (
+	"database/sql"
 	"errors"
 	"testapi/bd"
 	"testapi/pkg/loger"
@@ -14,14 +15,16 @@ type User struct {
 }
 
 func Save(user *User) error {
-	queryCreate := `INSERT INTO users (email, password) VALUES (?, ?)`
+	queryCreate := `INSERT INTO users  (email, password) VALUES (?, ?)`
 	hashPass, err := utils.Hash(user.Password)
 	if err != nil {
 		loger.Logrus.Error(err)
+		loger.Logrus.Trace(err.Error())
 	}
 	result, err := bd.DB.Exec(queryCreate, &user.Email, &hashPass)
 	if err != nil {
 		loger.Logrus.Error(err)
+		loger.Logrus.Trace(err.Error())
 		return err
 	}
 	user.ID, err = result.LastInsertId()
@@ -29,26 +32,27 @@ func Save(user *User) error {
 }
 
 func CheckUser(user *User) error {
-	query := `SELECT id, password users WHERE email = ? LIMIT 1`
-	row, err := bd.DB.Query(query, user.Email)
-	if err != nil {
-		loger.Logrus.Error(err)
-		return err
-	}
+	query := `SELECT id, password FROM users WHERE email = ?`
+	row := bd.DB.QueryRow(query, user.Email)
+
 	var checkPass string
 	// мы проверяем существует ли пользователь
 	// Если да захешим пароль и зименим айди
-	err = row.Scan(&user.ID, &checkPass)
+	err := row.Scan(&user.ID, &checkPass)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			loger.Logrus.Trace(err.Error())
+			return errors.New("user not found")
+		}
+		loger.Logrus.Trace(err.Error())
 		loger.Logrus.Error(err)
 		return err
 	}
-	isValidPassword := utils.CheckPasswordHash(user.Password, checkPass)
 
+	isValidPassword := utils.CheckPasswordHash(user.Password, checkPass)
 	if !isValidPassword {
 		return errors.New("invalid password")
 	}
-	defer row.Close()
 
 	return nil
 }

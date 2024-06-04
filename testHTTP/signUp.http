@@ -1,0 +1,11 @@
+### регистрация
+POST http://localhost:8080/signUp
+Content-Type: application/json
+
+{
+  "email": "TEST3@gmail.com",
+  "password": "TEST100"
+}
+
+### Проверка на валидацию дает создавать почту обычно на фронте, но на беке тоже думаю вариант
+

@@ -89,3 +89,19 @@ func CreateTableUsers() {
 	fmt.Println("Table Users created successfully")
 	loger.Logrus.Info("Table Users created successfully")
 }
+
+// мероприятие с презентацией книги, определнный узер может оставить заявку
+func CreateRegistrationEventBook() {
+	query := `CREATE TABLE IF NOT EXISTS registration_events (
+    id_event INTEGER PRIMARY KEY AUTOINCREMENT,
+    book_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    FOREIGN KEY(book_id) REFERENCES books(book_id)
+    FOREIGN KEY(user_id) REFERENCES users (id)
+)`
+	_, err := DB.Exec(query)
+	if err != nil {
+		loger.Logrus.Fatal("Таблица с регистрацией не создалать")
+		return
+	}
+}

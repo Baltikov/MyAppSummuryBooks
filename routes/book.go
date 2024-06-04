@@ -29,14 +29,14 @@ func createBook(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 	userID := context.GetInt64("UserID")
-	modelBook.UserID = int64(userID)
+	modelBook.UserID = userID
 
-	books, err := model.CreateBook(modelBook)
+	err = model.CreateBook(modelBook)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
-	context.JSON(http.StatusCreated, gin.H{"data": books})
+	context.JSON(http.StatusCreated, gin.H{"data": modelBook})
 
 }
 func updateBook(context *gin.Context) {

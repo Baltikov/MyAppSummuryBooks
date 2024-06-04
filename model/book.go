@@ -45,24 +45,25 @@ func GetBook(id int64) (Book, error) {
 		return Book{}, fmt.Errorf("error querying book: %v", err)
 	}
 	var book Book
-	err = rowBook.Scan(&book.ID, &book.Title, &book.Description, &book.Citation, &book.UserID)
+	err = rowBook.Scan(&book.ID, &book.Title, &book.Description, &book.Citation)
 	if err != nil {
 		return Book{}, fmt.Errorf("error scanning book: %v", err)
 	}
 	return book, nil
 }
-func CreateBook(book Book) ([]Book, error) {
-	query := "INSERT INTO books(title, description, citation) VALUES(?, ?, ?)"
-	result, err := bd.DB.Exec(query, &book.Title, &book.Description, &book.Citation)
+func CreateBook(book Book) error {
+	query := "INSERT INTO books(title, description, citation, user_id) VALUES(?, ?, ?, ?)"
+	result, err := bd.DB.Exec(query, &book.Title, &book.Description, &book.Citation, &book.UserID)
 	if err != nil {
-		return nil, fmt.Errorf("error inserting book: %v", err)
+		return fmt.Errorf("error inserting book: %v", err)
 	}
 	book.ID, err = result.LastInsertId()
-	books, err := GetBooks()
+
 	if err != nil {
-		return nil, fmt.Errorf("error getting books: %v", err)
+		return fmt.Errorf("error getting books: %v", err)
 	}
-	return books, nil
+	fmt.Println()
+	return nil
 
 }
 

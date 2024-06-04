@@ -9,6 +9,7 @@ func Hash(s string) (string, error) {
 	passord, err := bcrypt.GenerateFromPassword([]byte(s), bcrypt.MinCost)
 	if err != nil {
 		loger.Logrus.Error(err)
+		loger.Logrus.Trace(err.Error())
 		return "", nil
 	}
 	return string(passord), nil

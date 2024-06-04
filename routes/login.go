@@ -15,6 +15,7 @@ func signUp(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		loger.Logrus.Error(err)
+		loger.Logrus.Trace(err.Error())
 	}
 	err = model.Save(&user)
 	if err != nil {
@@ -28,12 +29,14 @@ func login(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		loger.Logrus.Error(err)
+		loger.Logrus.Trace(err.Error())
 	}
 	// обновить токен
 	err = model.CheckUser(&user)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		loger.Logrus.Error(err)
+		loger.Logrus.Trace(err.Error())
 		return
 	}
 	token, err := utils.GenerateJwt(user.Email, user.ID)
